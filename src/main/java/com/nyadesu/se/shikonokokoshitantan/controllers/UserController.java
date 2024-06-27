@@ -1,39 +1,65 @@
 package com.nyadesu.se.shikonokokoshitantan.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nyadesu.se.shikonokokoshitantan.model.UserModel;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.nyadesu.se.shikonokokoshitantan.NotFoundException.UserNotFoundException;
+import com.nyadesu.se.shikonokokoshitantan.Repository.UserRepository;
+import com.nyadesu.se.shikonokokoshitantan.model.User;
+  
 
 @RestController
 public class UserController {
-    @GetMapping("/user")
-    public UserModel getUser() {
-        return new UserModel(11, "koshino", "koshino@gmail.com", "12345");
-    }
 
-    public String getMethodName(@RequestParam String param) {
-        return new String();
+    UserRepository repo;
+
+    public UserController(UserRepository repo) {
+        this.repo = repo;
     }
 
     @GetMapping("/users")
-    public List<UserModel> getUsers() {
-        List<UserModel> users = new ArrayList<>();
-        users.add(new UserModel(1, "mario", "mario@gmail.com", "1234"));
-        users.add(new UserModel(2, "leo", "leo@gmail.com", "1234"));
-        users.add(new UserModel(3, "jon", "jon@gmail.com", "1234"));
-        users.add(new UserModel(4, "mike", "mike@gmail.com", "1234"));
-
-        return users;
+    public List<User> getUsers() {
+        return repo.findAll();
     }
 
-    @GetMapping("/user/{name}")
-    public UserModel getUserFromName(@PathVariable("name") String name) {
-        return new UserModel(1, "mario", "mario@gmail.com", "1234");
+
+    @GetMapping("/user/{id}")
+    public User getUser(@PathVariable Long id){
+        return repo.findById(id).orElseThrow(
+            () -> new UserNotFoundException(id));
     }
+
+
+    @PostMapping("/user/new")
+    public String addUser(@RequestBody User newUser) {
+        repo.save(newUser);
+        return "A new user is created";
+    }
+
+    @PutMapping("/user/edit/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User newUser) {
+        return repo.findById(id)
+                .map(user -> {
+                    user.setName(newUser.getName());
+                    user.setEmail(newUser.getEmail());
+                    user.setPassword(newUser.getPassword());
+                    return repo.save(user);
+                }).orElseGet(() -> {
+                    return repo.save(newUser);
+                });
+    }
+
+    @DeleteMapping("/user/delete/{id}")
+    public String deleteUser(@PathVariable Long id){
+        repo.deleteById(id);
+        return "The user is deleted!";
+    }
+
 }

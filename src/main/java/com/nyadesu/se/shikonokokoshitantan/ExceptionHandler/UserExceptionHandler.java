@@ -5,15 +5,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.nyadesu.se.shikonokokoshitantan.NotFoundException.ProductNotFoundException;
+import com.nyadesu.se.shikonokokoshitantan.NotFoundException.UserNotFoundException;
 
 @RestControllerAdvice
-public class ProductExceptionHandler {
+public class UserExceptionHandler {
 
-    @ExceptionHandler(ProductNotFoundException.class)
+    @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
 
-    String productNotFoundHandler(ProductNotFoundException e){
+    String userNotFoundHandler(UserNotFoundException e){
         return e.getMessage();
     } 
 }
