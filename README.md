@@ -1,5 +1,4 @@
-![alt text](picture.jpg)
-![pogi](pircture2.jpg)
+
 ### This is my project inspired by these people. ♥♥
 
 `
