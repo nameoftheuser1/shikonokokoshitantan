@@ -6,12 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nyadesu.se.shikonokokoshitantan.DTO.LoginRequest;
 import com.nyadesu.se.shikonokokoshitantan.DTO.RegistrationRequest;
 import com.nyadesu.se.shikonokokoshitantan.Repository.RoleRepository;
 import com.nyadesu.se.shikonokokoshitantan.Repository.UserAuthRepository;
@@ -83,5 +87,23 @@ public class AuthController {
 
         return new ResponseEntity<>("User registered successfully", HttpStatus.OK); 
         
+    }
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            System.out.println("Attempting to authenticate user: " + loginRequest.getUsernameOrEmail());
+
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    loginRequest.getUsernameOrEmail(),
+                    loginRequest.getPassword()
+                )
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return new ResponseEntity<>("Login successful!", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Invalid username or password", HttpStatus.UNAUTHORIZED);
+        }
     }
 }
