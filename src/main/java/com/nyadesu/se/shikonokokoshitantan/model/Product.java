@@ -15,15 +15,18 @@ public class Product {
     private String category;
     private String product_description;
     private double price;
+    private String url;
 
     public Product() {}
 
-    public Product(String product_name, String generic_name, String category, String product_description, double price) {
+    public Product(String product_name, String generic_name, String category, String product_description, double price,
+            String url) {
         this.product_name = product_name;
         this.generic_name = generic_name;
         this.category = category;
         this.product_description = product_description;
         this.price = price;
+        this.url = url;
     }
 
     // Getters and setters
@@ -65,6 +68,14 @@ public class Product {
 
     public double getPrice() {
         return price;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public void setPrice(double price) {
